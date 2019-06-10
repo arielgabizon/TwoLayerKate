@@ -1,0 +1,396 @@
+\def\notes{1}
+\documentclass[11pt]{article}
+%\usepackage[T1]{fontenc}
+%\usepackage[letterpaper]{geometry}
+%\geometry{verbose,tmargin=3cm,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+%\usepackage{verbatim}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+%\usepackage{setspace}
+\usepackage{xspace}%,enumitem}
+%\usepackage{times}
+\usepackage{fullpage,array}
+%\usepackage{hyperref}
+%\doublespacing
+\usepackage{color}
+\usepackage{numdef}
+\usepackage{enumitem}
+\usepackage{amsopn}
+%\usepackage{hyperref} 
+\usepackage{mathrsfs}
+\usepackage{float}
+\restylefloat{table}
+
+\providecommand{\sqbinom}{\genfrac{\lbrack}{\rbrack}{0pt}{}}
+\DeclareMathOperator{\spn}{span}
+
+\newif\ifdraft
+%\drafttrue
+\draftfalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+%\numberwithin{equation}{section} %% Comment out for sequentially-numbered
+\numberwithin{figure}{section} %% Comment out for sequentially-numbered
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{conjecture}[thm]{Conjecture}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{dfn}[thm]{Definition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{remark}[thm]{Remark}
+\newtheorem{proposition}[thm]{Proposition}
+\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{fact}[thm]{Fact}
+\newtheorem{openprob}[thm]{Open Problem}
+\newtheorem{remk}[thm]{Remark}
+\newtheorem{example}[thm]{Example}
+\newtheorem{apdxlemma}{Lemma}
+\newcommand{\question}[1]{{\sf [#1]\marginpar{?}} }
+%\usepackage{babel}
+\usepackage{tikz}
+
+\makeatletter
+\newcommand*{\circled}{\@ifstar\circledstar\circlednostar}
+\makeatother
+
+\newcommand*\circledstar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      fill,
+      circle,
+      minimum size=1.35em,
+      text=white,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+\newcommand*\circlednostar[1]{%
+  \tikz[baseline=(C.base)]
+    \node[%
+      draw,
+      circle,
+      minimum size=1.35em,
+      font=\sffamily,
+      inner sep=0.5pt
+    ](C) {#1};%
+}
+
+\providecommand{\bd}[1]{\circled{#1}}
+
+
+%Eli's macros
+\newcommand{\E}{{\mathbb{E}}}
+%\newcommand{\N}{{\mathbb{N}}}
+\newcommand{\R}{{\mathbb{R}}}
+\newcommand{\calF}{{\cal{F}}}
+%\newcommand{\inp}[1]{\langle{#1}\rangle}
+\newcommand{\disp}[1]{D_{#1}}
+%\newcommand{\spn}[1]{{\rm{span}}\left(#1\right)}
+%\newcommand{\supp}{{\rm{supp}}}
+\newcommand{\agree}{{\sf{agree}}}
+\newcommand{\RS}{{\sf{RS}}}
+\newcommand{\aRS}{{\sf{aRS}}}
+\newcommand{\rrs}{R_{\aRS}}
+\newcommand{\VRS}{V_\RS}
+\newcommand{\x}{\ensuremath{\mathbf{x}}\xspace}
+\renewcommand{\a}{\ensuremath{\mathbf{a}}\xspace}
+
+\newcommand{\X}{\ensuremath{\mathbf{X}}\xspace}
+\newcommand{\Y}{\ensuremath{\mathbf{Y}}\xspace}
+\newcommand{\y}{\ensuremath{\mathbf{y}}\xspace}
+
+\newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
+\newcommand{\angles}[1]{\langle{#1}\rangle}
+\renewcommand{\span}{\ensuremath{\mathsf{span}}\xspace}
+\newcommand{\condset}[2]{\set{#1 \mid #2 }}
+\newcommand{\zo}{\set{0,1}}
+\newcommand{\zon}{{\zo^n}}
+\newcommand{\zom}{{\zo^m}}
+\newcommand{\zok}{{\zo^}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\e}{\eps}
+%\newcommand{\d}{\delta}
+\newcommand{\poly}{\ensuremath{\mathrm{poly}(\lambda)}\xspace}
+\newcommand{\itone}{{\it{(i)}}\xspace}
+\newcommand{\ittwo}{{\it{(ii)}}\xspace}
+\newcommand{\itthree}{{\it{(iii)}}\xspace}
+\newcommand{\itfour}{{\it{(iv)}}\xspace}
+\newcommand{\cc}{{\rm{CC}}}
+\newcommand{\rnk}{{\rm{rank}}}
+\newcommand{\T}{T}
+\newcommand{\I}{{\mathbb{I}}}
+\ifdraft
+\newcommand{\ariel}[1]{{\color{blue}{\textit{#1 --- ariel gabizon}}}}
+\else
+\newcommand{\ariel}[1]{}
+\fi
+\providecommand{\improvement}[1]{{\color{red} \textbf{#1}}}
+\title{%
+Recursive Kate proofs}
+\date{\today}
+\author{}
+\begin{document}
+\maketitle
+ \mathchardef\mhyphen="2D
+
+%\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+\newcommand{\G}{\ensuremath{{\mathbb G}}\xspace}
+\renewcommand{\H}{\ensuremath{{\mathbb H}}\xspace}
+
+\newcommand{\Gstar}{\ensuremath{{\mathbb G}^*}\xspace}
+
+%\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+\newcommand{\grouppair}{\ensuremath{G^*}\xspace}
+
+\newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
+\newcommand{\F}{\ensuremath{{\mathbb F}_q}\xspace}
+\newcommand{\Fstar}{\ensuremath{\mathbb F^*}\xspace}
+
+\newcommand{\help}[1]{$#1$-helper\xspace}
+\newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
+\newcommand{\pair}[1]{$#1$-pair\xspace}
+\newcommand{\pairs}[1]{$#1$-pairs\xspace}
+
+\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+\newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
+\newcommand{\players}{\ensuremath{[n]}\xspace}
+\newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
+\newcommand{\advprime}{\ensuremath{A'}\xspace}
+\newcommand{\extprime}{\ensuremath{E'}\xspace}
+\newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+
+\newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
+\newcommand{\pairvec}[1]{$#1$-vector\xspace}
+\newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
+\newcommand{\Fr}{\ensuremath{\mathbb{F}_r}\xspace}
+\newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
+\newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
+\newcommand{\abase}{\ensuremath{A_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\bbase}{\ensuremath{B_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\cbase}{\ensuremath{C_{\mathrm{\mathbf{0}}}}\xspace}
+
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\bmid}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\cmid}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+
+\newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
+\newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
+\newcommand{\snark}{\ensuremath{\mathscr S}\xspace}
+\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
+
+\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+ \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+ \newcommand{\comm}[1]{\ensuremath{\mathsf{comm}_{#1}}\xspace}
+ \newcommand{\defeq}{:=}
+
+\newcommand{\A}{\ensuremath{\vec{A}}\xspace}
+\newcommand{\B}{\ensuremath{\vec{B}}\xspace}
+\newcommand{\C}{\ensuremath{\vec{C}}\xspace}
+\newcommand{\Btwo}{\ensuremath{\vec{B_2}}\xspace}
+\newcommand{\treevecsimp}{\ensuremath{(\tau,\rho_A,\rho_A \rho_B,\rho_A\alpha_A,\rho_A\rho_B\alpha_B, \rho_A\rho_B\alpha_C,\beta,\beta\gamma)}\xspace}% The sets of elements used in simplifed relation tree in main text body
+\newcommand{\rcptc}{random-coefficient subprotocol\xspace}
+\newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
+\newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
+\newcommand{\randadv}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+ \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
+ \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \newcommand{\pr}{\mathrm{Pr}}
+ \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+ \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+ \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+\newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
+\newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
+\newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
+\newcommand{\trapdoor}{\ensuremath{r}}
+\newcommand{\trapdoorext}{\ensuremath{r_{\mathrm{ext}}}\xspace}
+\newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
+
+\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
+\newcommand{\prv}{\ensuremath{\mathrm{P}}\xspace}
+\newcommand{\simprv}{\ensuremath{\mathrm{P^{sim}}}\xspace}
+
+\num\newcommand{\enc0}[1]{\ensuremath{\left[#1\right]}\xspace}
+%\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbf{G^*}}\xspace}  % would have liked to call this G01 but problem with name
+\num\newcommand{\g0}{\ensuremath{\mathbf{g}}\xspace}
+\newcommand{\inst}{\ensuremath{\phi}\xspace}
+\newcommand{\inp}{\ensuremath{x}\xspace}
+\newcommand{\wit}{\ensuremath{\omega}\xspace}
+\newcommand{\ver}{\ensuremath{\mathsf{V}}\xspace}
+\newcommand{\per}{\ensuremath{\mathsf{P}}\xspace}
+\newcommand{\rel}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\prf}{\ensuremath{\pi}\xspace}
+\newcommand{\ext}{\ensuremath{E}\xspace}
+\newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
+\newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
+\num\newcommand{\p1}{\ensuremath{P_1}\xspace}
+\newcommand{\advv}{\ensuremath{ {\mathcal A}^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
+\newcommand{\crs}{\ensuremath{\sigma}\xspace}
+%\num\newcommand{\crs1}{\ensuremath{\mathrm{\sigma}_1}\xspace}
+%\num\newcommand{\crs2}{\ensuremath{\mathrm{\sigma}_2}\xspace}
+
+\renewcommand{\sim}{\ensuremath{\mathsf{sim}}\xspace}%the distribution of messages when \advv simulates message of \p1
+\newcommand{\real}{\ensuremath{\mathsf{real}}\xspace}%the distribution of messages when \p1 is honest and \adv controls rest of players
+ \newcommand{\koevec}[2]{\ensuremath{(1,#1,\ldots,#1^{#2},\alpha,\alpha #1,\ldots,\alpha #1^{#2})}\xspace}
+\newcommand{\mida}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\midb}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\midc}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+\newcommand{\chal}{\ensuremath{\mathsf{challenge}}\xspace}
+\newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
+\newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
+\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\ro}{\ensuremath{{\mathcal R}}\xspace}
+\newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
+ \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
+ \num\newcommand{\elmpowers2}[1]{\ensuremath{\mathrm{\mathsf{e}}^2_{#1}}\xspace}
+\newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
+ \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
+ \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+\newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
+\newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
+\newcommand{\lib}{\ensuremath{\mathsf{Lib}}\xspace}
+\newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
+
+% \Section{Batching Kate proofs}
+%  Prover has commitments $F_0,\ldots,F_t$
+%   to polynomials $f_0,\ldots,f_t\in \F[X]$.   So $F_i =\enc1{f_i(\alpha)}$.
+%  We have random challenge $r\in \F$ from the blockchain on which we wish to check prover knows $f_i(r)$ for each $i$.
+%  \begin{enumerate}
+% \item 
+%  For $i\in [0..t]$ let $v_i=f_i(r)$.
+%  Let $V(X)\defeq \sum_{i=0}^t v_i\cdot X^i$.
+%  Prover sends $F_0,\ldots,F_t$ and Kate commitment $V=\enc1{V(\alpha)}$
+%  
+%  \item Verifier sends random $\gamma \in \F$.
+% \item Prover sends $v_\gamma \defeq V(\gamma)=\sum_{i=0}^t \gamma^i\cdot f_i(r)$,
+% 
+% and 
+% \[W\defeq \sum_{i=0}^t \gamma^i\cdot  W_i \]
+% where $W_i = \enc1{\frac{f_i(\alpha)-f_i(r)}{\alpha-r}}$.
+% 
+% and
+% \[W_V \defeq \enc1{\frac{V(\alpha)-V(\gamma)}{\alpha-\gamma}}\]
+% 
+% \item
+% Define $F\defeq \sum_{i=0}^t \gamma^i \cdot F_i $
+% 
+% Verifier checks 
+% \[e(F-\enc1{v_\gamma},\enc2{1})= e(W, \enc2{\alpha-r})\]
+% and
+% \[e(V-\enc1{v_\gamma},\enc2{1}) = e(W_V,\enc2{\alpha-\gamma}).\]
+% 
+% 
+% 
+% \end{enumerate}
+% \begin{remark}
+%  The two verifier checks in the last step can be combined to one using random coefficients, and moving terms.
+% \end{remark}
+% 
+
+\section{Two layer Libert/Kate}
+
+Think of our file as a vector $V\in \F^{N}$.
+We wish to have a ``two-layer'' version of Kate for proof of retrievability, where the prover's work is only $O(\sqrt{N})$.
+
+\paragraph{Notation/terminology}
+Let  \G be the source group of a pairing friendly curve over a field \Fr;
+such that $|\G|=q$.
+Let \H be a subgroup of a pairing friendly curve of size $r$, over a field $K$.
+
+
+Constructing $\G,\H$ using the zexe curves we have $\log q = 255,\log r = 377, \log |K| = 768$.
+
+
+and \H be a pairing friendly curve of order $r$.
+We use the notation $[n]=\set{1,\ldots,n}$.
+For a vector $x\in \F^n$ and subset $T\subset [n]$ we denote $x_T\in \F^{|T|}$ to be $x$ restricted to the indices in $T$
+
+\paragraph{Libert Commitments}
+We will use the Libert vector commitment for vectors in $\F^n$ as a black box.
+It has the following properties
+ \begin{itemize}
+  \item A commitment to a vector $(x_1,\ldots,x_n)\in \F^n$ is one element of \G.
+  \item After a preprocessing taking $O(n^2)$ operations in \G, for any subset $S\subset [n]$ of size  $t\leq n$, and vector of coefficients $(r_1,\ldots,r_t)\in \F^t$, $\sum_{i=1}^t r_i\cdot x_{T(i)}$
+  can be opened with $t$ group operations and the proof of correct opening is a single element of \G.
+ \end{itemize}
+
+ An important observation about Libert commitments, is
+ \begin{claim}\label{clm:libertsubset}
+Let $C=\lib(x_1,\ldots,x_n)$, and  $T\subset [n]$ be of size $t$.
+Fix  $C_T\in \G$. One can construct in $O(t)$ group operations a proof that $C_T=\lib(x_T)$.
+The proof consists merely of two \G elements and one \F element.
+ \end{claim}
+\begin{proof}
+ We describe the proof. Assume for simplicity of notation that $T=\set{1,\ldots,t}$.
+ The verifier (or using hash of $C_T$) chooses random $r_1,\ldots,r_t \in \F^t$.
+ The prover than opens  $C$ with $(r_1,\ldots,r_t,0,\ldots,0)$
+ and $C_T$ with $(r_1,\ldots,r_t)$.
+ If $C_T$ is \emph{not} a commitment to $x_T$ the probability that both open to the same value
+ is $1/q$ (or at most $t/q$ if using the derandomized choice $r_i=r^i$ for the coefficients).
+ 
+\end{proof}
+
+ 
+ 
+ 
+ \subsection{The two-layer scheme}
+ 
+ The two-layer scheme proceeds as follows.
+ \paragraph{Commitment to file:}
+ \begin{enumerate}
+  \item Let $n=m\defeq \sqrt{N}$. Split the file into $n$ blocks of $m$ elements. And compute for each block a Kate commitment $g_i\defeq \enc1{f_i(s)}\in \G$ where $f_i\in \F[X]$ has degree smaller than $m$.
+  \item Let $v=(x_1,\ldots,x_n,y_1,\ldots,y_n)$ be the coordinates of $g_1,\ldots,g_n$. Compute a libert commitment $C$ to $v$. And output $C$ as the commitment to the file.
+ \end{enumerate}
+\begin{remark}
+ For simplicity we comit in Step 2 separately to all $x,y$ coordinates. It should be enough to commit just to the sign of $y$ and thus pack many $y$'s into a single field element, thus cutting down the length of $v$
+\end{remark}
+\paragraph{Proof of retrievability}
+\begin{enumerate}
+ \item We have a challenge which is a subset $T\subset [n]$ of blocks, we think of $t\defeq |T|$ as constant. For simplicity of notation assume $T=\set{1,\ldots,t}$. The prover \prv now wishes to show he knows the contents of the first $t$ blocks.
+ \item\label{stp:comb} Assume the challenge also includes a uniform elements $\lambda,r\in\F$.
+ Denote for $i\in [t], \lambda_i\defeq \lambda^i$.
+ \prv sends the element $g\in \G$, which is allegedly $\sum_{i\in T} \lambda^i\cdot g_i$.
+ Note that this is exactly the Kate commitment to $f(X)\defeq \sum_{i\in T} \lambda^i\cdot f_i(X)$.
+ \prv will send a commitment $C_T=\lib(x_1,\ldots,x_t,y_1,\ldots,y_t)$ and prove it is correct using the protocol from Claim \ref{clm:libertsubset}.
+ \item Now, let $C$ be a circuit over \Fr whose public inputs are $C_T,g,\lambda_1,\ldots,\lambda_t$; and private inputs are $x_1,\ldots,x_t,$$y_1,\ldots,y_t$ that checks that
+ \begin{enumerate}
+  \item $C_T=\lib(x_1,\ldots,x_t,y_1,\ldots,y_t)$
+  %(Explicitly computing this in the SNARK might be avoided using techniques from AD-SNARK and Gepetto on getting Pedersen commtiments for free).
+  \item $g=\sum_{i\in T} \lambda_i \cdot (x_i,y_i) = \sum_{i\in T} \lambda_i \cdot g_i$ 
+ \end{enumerate}
+\prv will provide a SNARK proof using the curve \H that $C$ accepts - thus proving that indeed $g$ is the Kate commitment to $f$.
+\item \prv  will now open $f(r)$. Note that if \prv indeed has the blocks of $T$ stored he can compute the coefficeints of $f$ in  $t\cdot n = O(\sqrt{N})$ operations. However, if he is missing any of the coefficients of \sett{f_i}{i\in T} his success probability is negligible.
+\end{enumerate}
+ 
+One important thing to notice is that in the third step the circuit size is $O(t\cdot \log q)$,
+as we are combining $t$ group elements in it; i.e. there is no dependence on $n$.
+ 
+ 
+ \paragraph{costs}
+ We estimate the number of constraints for $C$ will be roughly $1000t$.
+ A rough estimate seems to be a prover work of $7000t$ exponentiations for the proof of $C$ (This is counting a $\G_2$ exponentation as $3.5$ $\G_1$ exponentations in the Groth16 scheme. 
+ As these are on a curve with twice as many bits, let's counting them as $14000t$.
+ plus another $\sqrt{N}$ for computing the proof for the opening of $f$.
+ 
+ Thinking of say $t=200, N=200000^2 =40 Mil.$ we get roughly a seven hundred thoundand exponentiations  per opening rather than 40 million using straightforward Kate
+ 
+ \bibliographystyle{alpha}
+\bibliography{References}
+\end{document}
+ 

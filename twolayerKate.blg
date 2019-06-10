@@ -1,0 +1,10 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: twolayerKate.aux
+The style file: alpha.bst
+I found no \citation commands---while reading file twolayerKate.aux
+Database file #1: References.bib
+I was expecting a `,' or a `}'---line 142 of file References.bib
+ :   
+ :   title = {https://www.z.cash},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+(There were 2 error messages)
