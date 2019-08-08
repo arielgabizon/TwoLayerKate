@@ -96,6 +96,11 @@
 \newcommand{\X}{\ensuremath{\mathbf{X}}\xspace}
 \newcommand{\Y}{\ensuremath{\mathbf{Y}}\xspace}
 \newcommand{\y}{\ensuremath{\mathbf{y}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
+\newcommand{\comperm}{\ensuremath{\mathsf{com_{\sigma}}}\xspace}
+\newcommand{\cm}{\ensuremath{\mathsf{cm}}\xspace}
+\newcommand{\cmsig}{\ensuremath{\mathsf{cm_\sigma}}\xspace}
+\newcommand{\open}{\ensuremath{\mathsf{open}}\xspace}
 
 \newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
 \newcommand{\angles}[1]{\langle{#1}\rangle}
@@ -217,6 +222,7 @@ Recursive Kate proofs}
 \newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
 
 \num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\newcommand{\verify}[1]{\ensuremath{\mathsf{ver}(#1)}\xspace}
 \num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
 \newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
 \newcommand{\prv}{\ensuremath{\mathrm{P}}\xspace}
@@ -259,7 +265,7 @@ Recursive Kate proofs}
  \num\newcommand{\elmpowers2}[1]{\ensuremath{\mathrm{\mathsf{e}}^2_{#1}}\xspace}
 \newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
  \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
- \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+ \newcommand{\polysofdeg}[1]{\ensuremath{{\mathbb F}_{< #1}[X]}\xspace}
 \newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
 \newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
 \newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
@@ -383,13 +389,48 @@ One important thing to notice is that in the third step the circuit size is $O(t
 as we are combining $t$ group elements in it; i.e. there is no dependence on $n$.
  
  
- \paragraph{costs}
+ \paragraph{costs and comparissons}
+ We estimate the cost of this method in terms of $\G1$ exponentations vs straightforward Kate, and Merkle inclusion proofs.
+ To account also for field operations, and operatios on $\H$,
+ We use the following conversion rates, the first two derived from https://github.com/arielgabizon/pairing/blob/benchresults/benchresults.txt
+ \begin{enumerate}
+  \item $\G_2$ exp = 3.5 $\G_1$ exp
+  \item \Fr mult = 1/4300 $\G_1$ exp
+ \end{enumerate}
+
+ 
+ 
+ 
  We estimate the number of constraints for $C$ will be roughly $1000t$.
  A rough estimate seems to be a prover work of $7000t$ exponentiations for the proof of $C$ (This is counting a $\G_2$ exponentation as $3.5$ $\G_1$ exponentations in the Groth16 scheme. 
  As these are on a curve with twice as many bits, let's counting them as $14000t$.
  plus another $\sqrt{N}$ for computing the proof for the opening of $f$.
  
  Thinking of say $t=200, N=200000^2 =40 Mil.$ we get roughly a seven hundred thoundand exponentiations  per opening rather than 40 million using straightforward Kate
+ 
+ \renewcommand{\F}{\ensuremath{{\mathbb F}}\xspace}
+ \section{A version of Kate with $\sqrt{n}$ opening time and $n^{1.5}$ size CRS}
+ The idea is to just sum up independent Kate commitments, but have a CRS that allows us to verifably ``narrow down'' to one of the commitments during opening.
+ \begin{enumerate}
+  \item \textbf{CRS:} Let $t\defeq \sqrt n$. Sample uniform $x_1,\ldots,x_t,\alpha_1,\ldots,\alpha_t\in \F$. Output for each  $i\in [t], j\in \set{0,\ldots, t-1}$ $x_i^j$, and for each $i\in [t]  j\in \set{0,\ldots, t-1},\ell \in [t]\setminus\set{i}$ the element $\alpha_\ell x_i^j$.
+  \item \textbf{Commit:} $\cm(a_1,\ldots,a_n):$ Split the input to $t$ blocks of size $t$ and let $f_i\in\polysofdeg{t}$ be the polynomial whose values/coefficient are the $i$'th block.
+  Define
+  \[f(X_1,\ldots,X_t)\defeq \sum_{i\in [t]} f_i(X_i)  \]
+  The commitment  to $\cm(a)$ is $f(x_1,\ldots,x_n)$.
+  \item \textbf{$\open(\cm,i,r)$:}  Prover computes $H\in \polysofdeg{t}$ similarly to Kate
+  \[H(X_i)\defeq (f_i(X_i)-f_i(r))/(X_i-r)\]
+  and 
+  \[f_{\neq i}(X_1,\ldots,X_n)\defeq\sum_{i'\neq i} f_i(X_i)\]
+  Sends three proof elements:
+  \[H=\enc1{H(x_i)},W=\enc1{f_{\neq i}(x_1,\ldots,x_n)}, W'=\alpha_i\cdot W\] 
+  \item \verify{\cm,H,W,W',i,r,s}: The intiution of verification is to do the regular Kate check on the $i$'th polynomial with $\cm-W$ as the commitment; and to use a ``knowledge check'' to verify that $\cm-W$ is really the commitment to $f_i$ - by checking $W$ doesn't have any terms in $X_i$ (and thus $\cm-W$ contains all $X_i$ terms from $W$).
+  
+  To verify that $f_i(r)=s$  check that
+  \[e(W,\alpha_i)= e(W',\enc2{1}),  \]
+  and similarly to Kate:
+  \[e(\cm - s,\enc2{1})=e(H,\enc2{X_i-r})\cdot e(W,\enc2{1})\]
+  \end{enumerate}
+
  
  \bibliographystyle{alpha}
 \bibliography{References}
