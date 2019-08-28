@@ -222,6 +222,7 @@ Recursive Kate proofs}
 \newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
 
 \num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\newcommand{\enct}[1]{\ensuremath{\left[#1\right]_t}\xspace}
 \newcommand{\verify}[1]{\ensuremath{\mathsf{ver}(#1)}\xspace}
 \num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
 \newcommand{\gen}{\ensuremath{\mathsf{Gen}}\xspace}
@@ -412,7 +413,7 @@ as we are combining $t$ group elements in it; i.e. there is no dependence on $n$
  \section{A version of Kate with $\sqrt{n}$ opening time and $n^{1.5}$ size CRS}
  The idea is to just sum up independent Kate commitments, but have a CRS that allows us to verifably ``narrow down'' to one of the commitments during opening.
  \begin{enumerate}
-  \item \textbf{CRS:} Let $t\defeq \sqrt n$. Sample uniform $x_1,\ldots,x_t,\alpha_1,\ldots,\alpha_t\in \F$. Output for each  $i\in [t], j\in \set{0,\ldots, t-1}$ $x_i^j$, and for each $i\in [t]  j\in \set{0,\ldots, t-1},\ell \in [t]\setminus\set{i}$ the element $\alpha_\ell x_i^j$.
+  \item \textbf{CRS:} Let $t\defeq \sqrt n$. Sample uniform $x_1,\ldots,x_t,\alpha_1,\ldots,\alpha_t\in \F$. Output for each  $i\in [t], j\in \set{0,\ldots, t-1}$ $\enc1{x_i^j}$, and for each $i\in [t],  j\in \set{0,\ldots, t-1},\ell \in [t]\setminus\set{i}$ the element $\alpha_\ell x_i^j$.
   \item \textbf{Commit:} $\cm(a_1,\ldots,a_n):$ Split the input to $t$ blocks of size $t$ and let $f_i\in\polysofdeg{t}$ be the polynomial whose values/coefficient are the $i$'th block.
   Define
   \[f(X_1,\ldots,X_t)\defeq \sum_{i\in [t]} f_i(X_i)  \]
@@ -431,7 +432,30 @@ as we are combining $t$ group elements in it; i.e. there is no dependence on $n$
   \[e(\cm - s,\enc2{1})=e(H,\enc2{X_i-r})\cdot e(W,\enc2{1})\]
   \end{enumerate}
 
- 
+
+  \section{Reducing SRS size to $\sqrt{n}$ by committing in the target group}
+ The idea is to just sum up independent Kate commitments, but have a CRS that allows us to verifably ``narrow down'' to one of the commitments during opening.
+ \begin{enumerate}
+  \item \textbf{CRS:} Let $t\defeq \sqrt n$. Sample uniform $x_1,\ldots,x_t,\alpha_1,\ldots,\alpha_t\in \F$. Output for each  $j\in \set{0,\ldots, t-1}$ $\enc1{x^j}$, and for each $i\in [t]$ the elements $\enc2{\alpha_i},\enc2{\alpha_i\cdot x}$.
+  \item \textbf{Commit:} $\cm(a_1,\ldots,a_n):$ Split the input to $t$ blocks of size $t$ and let $f_i\in\polysofdeg{t}$ be the polynomial whose values/coefficient are the $i$'th block.
+  Define
+  \[f(X)\defeq \sum_{i\in [t]} \alpha_i f_i(X)  \]
+  The commitment  to $\cm(a)$ is 
+  \[\enc2{f(x,\alpha_1,\ldots,\alpha_t)} = \prod_{i\in [t]} e(f_i(x),\alpha_i)\]
+  \item \textbf{$\open(\cm,i,r)$:}  Prover computes $H\in \polysofdeg{t}$ similarly to Kate
+  \[H(X_i)\defeq (f_i(X_i)-f_i(r))/(X_i-r)\]
+  and 
+  \[f_{\neq i}(X,\alpha_1,\ldots,\alpha_t)\defeq\sum_{j\neq i} \alpha_j f_j(X)\]
+  Sends three proof elements:
+  \[H=\enc1{H(x)},W=\enct{f_{\neq i}(x,\alpha_1,\ldots,\alpha_t)}\] 
+  \item \verify{\cm,H,W,W',i,r,s}: The intiution of verification is to do the regular Kate check on the $i$'th polynomial with $\cm-W$ as the commitment; and to use a ``knowledge check'' to verify that $\cm-W$ is really the commitment to $f_i$ - by checking $W$ doesn't have any terms in $X_i$ (and thus $\cm-W$ contains all $X_i$ terms from $W$).
+  
+  To verify that $f_i(r)=s$  check that
+  \[W\cdot e(H,\enc2{\alpha_i(x-r)})= \cm \cdot \enct{-s}.\]
+  \end{enumerate}
+
+  
+  
  \bibliographystyle{alpha}
 \bibliography{References}
 \end{document}
